@@ -3,13 +3,15 @@ type InputProps = {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     type?: "text" | "date" | "time";
+    placeholder?: string;
+    maxLength?: number;
 };
 
-export const Input = ({ label, value, onChange, type = "text" }: InputProps) => {
+export const Input = ({ label, value, onChange, type = "text", placeholder, maxLength }: InputProps) => {
     return (
         <>
             <label>{label}</label>
-            <input type={type} value={value} onChange={onChange} />
+            <input placeholder={placeholder} type={type} value={value} onChange={onChange} maxLength={maxLength} />
         </>
     );
 };
