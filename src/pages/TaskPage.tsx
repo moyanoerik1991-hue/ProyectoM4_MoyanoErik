@@ -4,7 +4,7 @@ import { useTasks } from "../hooks/useTasks.ts";
 import { sortTasksByDeadline } from "../utils/sortTasksByDeadline.ts";
 
 export const TaskPage = () => {
-    const { tasks, handleAddTask, handleToggleComplete, handleDelete } = useTasks();
+    const { tasks, handleAddTask, handleToggleComplete, handleDelete, handleEditTask } = useTasks();
     const sortedTasks = sortTasksByDeadline(tasks);
     return (
         <>
@@ -15,6 +15,7 @@ export const TaskPage = () => {
                     task={task}
                     onToggleComplete={handleToggleComplete}
                     onDelete={handleDelete}
+                    onEditTask={handleEditTask}
                 />
             ))}
         </>
