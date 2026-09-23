@@ -3,6 +3,8 @@ import type { Task } from '../types/Task.ts'
 import { Input } from './ui/Input.tsx'
 import { Button } from './ui/Button.tsx'
 import { Textarea } from './ui/Textarea.tsx';
+import { Select } from './ui/Select.tsx';
+import { CATEGORY_OPTIONS } from '../utils/taskCategories.ts';
 import { getDeadlineRange } from '../utils/getDeadlineRange.ts';
 import { getTimeRemaining } from '../utils/getTimeRemaining.ts';
 
@@ -13,6 +15,7 @@ interface AddTaskProps {
 export const AddTask = ({ onAddTask }: AddTaskProps) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState<Task["category"]>("Otros");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -42,9 +45,10 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
         }
 
         setError(null);
-        onAddTask({ title, description, deadline: newDeadline });
+        onAddTask({ title, description, category, deadline: newDeadline });
         setTitle("");
         setDescription("");
+        setCategory("Otros");
         setDate("");
         setTime("");
     }
@@ -65,6 +69,12 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={200}
+            />
+            <Select
+                label="Categoria"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as Task["category"])}
+                options={CATEGORY_OPTIONS}
             />
             <fieldset>
                 <legend>Fecha Limite de la Tarea</legend>
