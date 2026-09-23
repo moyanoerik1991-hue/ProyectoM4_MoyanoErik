@@ -1,17 +1,19 @@
 import { useState } from "react";
 import type { Task } from "../types/Task";
 import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
+import { Textarea } from "./ui/Textarea";
 import { formatDate } from "../utils/formatDate";
 import { useCountdown } from "../hooks/useCountdown";
 import { dateToInputStrings } from "../utils/dateToInputStrings";
-import { Textarea } from "./ui/Textarea";
-import { Input } from "./ui/Input";
+import { getDeadlineRange } from "../utils/getDeadlineRange";
+import { getTimeRemaining } from "../utils/getTimeRemaining";
 
 interface TaskItemProps {
     task: Task;
-    onToggleComplete: (id: number) => void;
-    onDelete: (id: number) => void;
-    onEditTask: (id: number, updateFields: Omit<Task, "id" | "date" | "completed">) => void;
+    onToggleComplete: (id: string) => void;
+    onDelete: (id: string) => void;
+    onEditTask: (id: string, updateFields: Omit<Task, "id" | "userId" | "date" | "completed">) => void;
 }
 
 export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskItemProps) => {
@@ -21,6 +23,16 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
     const [editDescription, setEditDescription] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editTime, setEditTime] = useState("");
+    const [error, setError] = useState<string | null>(null);
+
+    const dateRange = getDeadlineRange();
+
+    let countdownText = null;
+    if (!task.completed) {
+        countdownText = countdown.expired
+            ? "Tiempo Expirado"
+            : `Tiempo Restante: ${countdown.days}d  ${countdown.hours}h  ${countdown.minutes}m`;
+    }
 
     const handleEditClick = () => {
         const { datePart, timePart } = dateToInputStrings(task.deadline);
@@ -29,28 +41,44 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
         setEditDescription(task.description);
         setEditDate(datePart);
         setEditTime(timePart);
+        setError(null);
     };
 
     const handleSaveClick = () => {
-        if (editTitle.trim().length < 3 || !editDescription.trim() || !editDate.trim() || !editTime.trim()) return;
+        if (editTitle.trim().length < 3) {
+            setError("El título debe tener al menos 3 caracteres.");
+            return;
+        }
+        if (!editDescription.trim()) {
+            setError("La descripción no puede estar vacía.");
+            return;
+        }
+        if (!editDate.trim() || !editTime.trim()) {
+            setError("Debés completar la fecha y hora límite.");
+            return;
+        }
+
         const newDeadline = new Date(editDate + "T" + editTime);
+        if (getTimeRemaining(newDeadline).expired) {
+            setError("La fecha límite ya pasó. Elegí una fecha futura.");
+            return;
+        }
+
+        setError(null);
         onEditTask(task.id, { title: editTitle, description: editDescription, deadline: newDeadline });
         setIsEditing(false);
-    }
+    };
 
     const handleCancelClick = () => {
+        setError(null);
         setIsEditing(false);
-    }
-
-    let countdownText = null;
-    if (!task.completed) {
-        countdownText = countdown.expired ? "Tiempo Expirado" : `Tiempo Restante: ${countdown.days}d  ${countdown.hours}h  ${countdown.minutes}m`;
-    }
+    };
 
     return (
         <div>
             {isEditing ? (
                 <>
+                    {error && <p>{error}</p>}
                     <Input
                         label="Titulo"
                         placeholder="Nueva Tarea"
@@ -72,6 +100,8 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
                             type="date"
                             value={editDate}
                             onChange={(e) => setEditDate(e.target.value)}
+                            min={dateRange.min}
+                            max={dateRange.max}
                         />
                         <Input
                             label="Hora"
