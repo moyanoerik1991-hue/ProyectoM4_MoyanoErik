@@ -3,9 +3,11 @@ import type { Task } from '../types/Task.ts'
 import { Input } from './ui/Input.tsx'
 import { Button } from './ui/Button.tsx'
 import { Textarea } from './ui/Textarea.tsx';
+import { getDeadlineRange } from '../utils/getDeadlineRange.ts';
+import { getTimeRemaining } from '../utils/getTimeRemaining.ts';
 
 interface AddTaskProps {
-    onAddTask: (task: Omit<Task, "id" | "date" | "completed">) => void;
+    onAddTask: (task: Omit<Task, "id" | "userId" | "date" | "completed">) => void;
 }
 
 export const AddTask = ({ onAddTask }: AddTaskProps) => {
@@ -13,15 +15,34 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
+    const [error, setError] = useState<string | null>(null);
+
+    const dateRange = getDeadlineRange();
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (title.trim().length < 3 || !description.trim() || !date.trim() || !time.trim()) return;
-        onAddTask({
-            title,
-            description,
-            deadline: new Date(date + "T" + time)
-        });
+
+        if (title.trim().length < 3) {
+            setError("El título debe tener al menos 3 caracteres.");
+            return;
+        }
+        if (!description.trim()) {
+            setError("La descripción no puede estar vacía.");
+            return;
+        }
+        if (!date.trim() || !time.trim()) {
+            setError("Debés completar la fecha y hora límite.");
+            return;
+        }
+
+        const newDeadline = new Date(date + "T" + time);
+        if (getTimeRemaining(newDeadline).expired) {
+            setError("La fecha límite ya pasó. Elegí una fecha futura.");
+            return;
+        }
+
+        setError(null);
+        onAddTask({ title, description, deadline: newDeadline });
         setTitle("");
         setDescription("");
         setDate("");
@@ -30,6 +51,7 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <p>{error}</p>}
             <Input
                 label="Titulo"
                 placeholder="Nueva Tarea"
@@ -51,6 +73,8 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
+                    min={dateRange.min}
+                    max={dateRange.max}
                 />
                 <Input
                     label="Hora"
@@ -62,7 +86,6 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
             <Button
                 label="Agregar"
                 type="submit"
-                disabled={title.trim().length < 3 || !description.trim() || !date.trim() || !time.trim()}
             />
         </form>
     );
