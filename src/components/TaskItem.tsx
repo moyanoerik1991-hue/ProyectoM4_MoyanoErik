@@ -3,11 +3,14 @@ import type { Task } from "../types/Task";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { Textarea } from "./ui/Textarea";
+import { Select } from "./ui/Select";
 import { formatDate } from "../utils/formatDate";
 import { useCountdown } from "../hooks/useCountdown";
 import { dateToInputStrings } from "../utils/dateToInputStrings";
 import { getDeadlineRange } from "../utils/getDeadlineRange";
 import { getTimeRemaining } from "../utils/getTimeRemaining";
+import { CATEGORY_OPTIONS } from "../utils/taskCategories";
+
 
 interface TaskItemProps {
     task: Task;
@@ -23,6 +26,7 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
     const [editDescription, setEditDescription] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editTime, setEditTime] = useState("");
+    const [editCategory, setEditCategory] = useState<Task["category"]>("Otros");
     const [error, setError] = useState<string | null>(null);
 
     const dateRange = getDeadlineRange();
@@ -41,6 +45,7 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
         setEditDescription(task.description);
         setEditDate(datePart);
         setEditTime(timePart);
+        setEditCategory(task.category);
         setError(null);
     };
 
@@ -65,7 +70,7 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
         }
 
         setError(null);
-        onEditTask(task.id, { title: editTitle, description: editDescription, deadline: newDeadline });
+        onEditTask(task.id, { title: editTitle, description: editDescription, category: editCategory, deadline: newDeadline });
         setIsEditing(false);
     };
 
@@ -93,6 +98,12 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
                         onChange={(e) => setEditDescription(e.target.value)}
                         maxLength={200}
                     />
+                    <Select
+                        label="Categoria"
+                        value={editCategory}
+                        onChange={(e) => setEditCategory(e.target.value as Task["category"])}
+                        options={CATEGORY_OPTIONS}
+                    />
                     <fieldset>
                         <legend>Fecha Limite de la Tarea</legend>
                         <Input
@@ -117,6 +128,7 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
                 <>
                     <h3>{task.title}</h3>
                     <p>{task.description}</p>
+                    <p>Categoria: {task.category}</p>
                     <p>Fecha de creación: {formatDate(task.date)}</p>
                     <p>Fecha de vencimiento: {formatDate(task.deadline)}</p>
                     <p>{task.completed ? "Completada" : "Pendiente"}</p>
