@@ -1,74 +1,118 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth.ts";
+import { Input } from "../ui/Input.tsx";
+import { Button } from "../ui/Button.tsx";
+import { PasswordInput } from "../ui/PasswordInput.tsx"
+import { getFirebaseAuthErrorMessage } from "../../utils/firebaseAuthError.ts";
+import { validateLogin } from "../../utils/authValidation.ts";
 
 interface LoginFormProps {
     onLoginSuccess: () => void;
 }
 
-export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
+export const LoginForm = ({
+    onLoginSuccess,
+}: LoginFormProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
         e.preventDefault();
+
         setError(null);
 
-        if (!email.trim() || !password) {
-            setError("Todos los campos son obligatorios.");
+        const validationError = validateLogin(
+            email,
+            password
+        );
+
+        if (validationError) {
+            setError(validationError);
             return;
         }
 
-        if (!emailRegex.test(email)) {
-            setError("Ingresa un correo electrónico válido.");
-            return;
+        try {
+            setLoading(true);
+
+            await login(
+                email.trim().toLowerCase(),
+                password
+            );
+
+            onLoginSuccess();
+        } catch (error) {
+            setError(
+                getFirebaseAuthErrorMessage(error)
+            );
+        } finally {
+            setLoading(false);
         }
+    };
 
-        if (password.length < 6) {
-            setError("La contraseña debe tener al menos 6 caracteres.");
-            return;
+    const handleGoogleLogin = async () => {
+        setError(null);
+
+        try {
+            setLoading(true);
+
+            await loginWithGoogle();
+
+            onLoginSuccess();
+        } catch (error) {
+            setError(
+                getFirebaseAuthErrorMessage(error)
+            );
+        } finally {
+            setLoading(false);
         }
-
-        const credentials = {
-            email: email.trim().toLowerCase(),
-            password,
-        };
-
-        await login(credentials.email, credentials.password);
-
-        onLoginSuccess();
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
+            <h2>Iniciar sesión</h2>
 
             {error && <p>{error}</p>}
 
-            <input
+            <Input
+                label="Email"
                 type="email"
-                placeholder="Email"
+                placeholder="Correo electrónico"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
             />
 
-            <input
-                type="password"
+            <PasswordInput
+                label="Contraseña"
                 placeholder="Contraseña"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
+                onChange={(e) =>
+                    setPassword(e.target.value)
+                }
             />
 
-            <button type="submit">
-                Conectarse
-            </button>
+            <Button
+                label={
+                    loading
+                        ? "Conectando..."
+                        : "Iniciar sesión"
+                }
+                type="submit"
+                disabled={loading}
+            />
+
+            <Button
+                label="Continuar con Google"
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+            />
         </form>
     );
 };
