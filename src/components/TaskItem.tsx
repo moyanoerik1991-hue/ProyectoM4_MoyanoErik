@@ -80,7 +80,7 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
     };
 
     return (
-        <div>
+        <article className="task-page__task-card">
             {isEditing ? (
                 <>
                     {error && <p>{error}</p>}
@@ -104,40 +104,57 @@ export const TaskItem = ({ task, onToggleComplete, onDelete, onEditTask }: TaskI
                         onChange={(e) => setEditCategory(e.target.value as Task["category"])}
                         options={CATEGORY_OPTIONS}
                     />
-                    <fieldset>
+                    <fieldset className="task-form__deadline">
                         <legend>Fecha Limite de la Tarea</legend>
-                        <Input
-                            label="Fecha"
-                            type="date"
-                            value={editDate}
-                            onChange={(e) => setEditDate(e.target.value)}
-                            min={dateRange.min}
-                            max={dateRange.max}
-                        />
-                        <Input
-                            label="Hora"
-                            type="time"
-                            value={editTime}
-                            onChange={(e) => setEditTime(e.target.value)}
-                        />
+                        <div className="task-form__inline-group">
+                            <div className="task-form__deadline-field">
+                                <Input
+                                    label="Fecha"
+                                    type="date"
+                                    value={editDate}
+                                    onChange={(e) => setEditDate(e.target.value)}
+                                    min={dateRange.min}
+                                    max={dateRange.max}
+                                />
+                            </div>
+                            <div className="task-form__deadline-field">
+                                <Input
+                                    label="Hora"
+                                    type="time"
+                                    value={editTime}
+                                    onChange={(e) => setEditTime(e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </fieldset>
                     <Button label="Guardar" onClick={handleSaveClick} />
                     <Button label="Cancelar" onClick={handleCancelClick} />
                 </>
             ) : (
                 <>
-                    <h3>{task.title}</h3>
-                    <p>{task.description}</p>
-                    <p>Categoria: {task.category}</p>
-                    <p>Fecha de creación: {formatDate(task.date)}</p>
-                    <p>Fecha de vencimiento: {formatDate(task.deadline)}</p>
-                    <p>{task.completed ? "Completada" : "Pendiente"}</p>
-                    {countdownText && <p>{countdownText}</p>}
-                    <Button label={task.completed ? "Pendiente" : "Completar"} onClick={() => onToggleComplete(task.id)} />
-                    <Button label="Editar" onClick={handleEditClick} />
-                    <Button label="Eliminar" onClick={() => onDelete(task.id)} />
+                    <header className="task-card__header">
+                        <h3 title={task.title}>{task.title}</h3>
+                        <span className={`task-badge ${task.completed ? "task-badge--completed" : countdown.expired ? "task-badge--expired" : "task-badge--pending"}`}>
+                            {task.completed ? "Completada" : countdown.expired ? "Expirada" : "Pendiente"}
+                        </span>
+                    </header>
+                    <p className="task-card__description" title={task.description}>{task.description}</p>
+                    <div className="task-card__details">
+                        <p><strong>Categoría</strong><span>{task.category}</span></p>
+                        <p><strong>Creada</strong><span>{formatDate(task.date)}</span></p>
+                        <p><strong>Vence</strong><span>{formatDate(task.deadline)}</span></p>
+                        <p className={`task-card__countdown ${!countdownText ? "task-card__countdown--empty" : ""}`} aria-hidden={!countdownText}>
+                            <strong>Tiempo</strong>
+                            <span>{countdownText?.replace("Tiempo Restante: ", "") || "-"}</span>
+                        </p>
+                    </div>
+                    <div className="task-card__actions">
+                        <Button label={task.completed ? "Pendiente" : "Completar"} onClick={() => onToggleComplete(task.id)} />
+                        <Button label="Editar" onClick={handleEditClick} />
+                        <Button label="Eliminar" onClick={() => onDelete(task.id)} />
+                    </div>
                 </>
             )}
-        </div>
+        </article>
     );
 };
