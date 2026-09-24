@@ -10,11 +10,13 @@ import { filterTasks, filterTasksByCategory, type FilterCategory } from "../util
 import type { Task } from "../types/Task.ts";
 import { Button } from "../components/ui/Button.tsx";
 import { sendTaskSummaryEmail } from "../services/emailService.ts";
+import "../components/styles/TaskPage.css";
 
 export const TaskPage = () => {
     const { tasks, handleAddTask, handleToggleComplete, handleDelete, handleEditTask } = useTasks();
     const { user } = useAuth();
     const [emailStatus, setEmailStatus] = useState<string | null>(null);
+    const [activePanel, setActivePanel] = useState<"new-task" | "filters">("new-task");
     const [activeFilters, setActiveFilters] = useState<FilterCategory[]>([]);
     const [activeCategories, setActiveCategories] = useState<Task["category"][]>([]);
 
@@ -34,21 +36,70 @@ export const TaskPage = () => {
     };
 
     return (
-        <>
-            <AddTask onAddTask={handleAddTask} />
-            <Button label="Enviar resumen por email" onClick={handleSendSummary} />
-            {emailStatus && <p>{emailStatus}</p>}
-            <TaskFilter activeFilters={activeFilters} onFilterChange={setActiveFilters} />
-            <CategoryFilter activeCategories={activeCategories} onCategoryChange={setActiveCategories} />
-            {sortedTasks.map((task) => (
-                <TaskItem
-                    key={task.id}
-                    task={task}
-                    onToggleComplete={handleToggleComplete}
-                    onDelete={handleDelete}
-                    onEditTask={handleEditTask}
-                />
-            ))}
-        </>
+        <main className="task-page">
+            <section className="task-page__workspace">
+                <aside className="task-page__sidebar">
+                    <button
+                        className={`task-page__nav-btn ${activePanel === "new-task" ? "task-page__nav-btn--active" : ""}`}
+                        type="button"
+                        onClick={() => setActivePanel("new-task")}
+                        aria-pressed={activePanel === "new-task"}
+                    >
+                        Nueva tarea
+                    </button>
+                    <button
+                        className={`task-page__nav-btn ${activePanel === "filters" ? "task-page__nav-btn--active" : ""}`}
+                        type="button"
+                        onClick={() => setActivePanel("filters")}
+                        aria-pressed={activePanel === "filters"}
+                    >
+                        Filtros
+                    </button>
+                </aside>
+
+                <section className="task-page__panel" aria-live="polite">
+                    <h1 className="task-page__panel-title">
+                        {activePanel === "new-task" ? "Nueva tarea" : "Filtros"}
+                    </h1>
+                    {activePanel === "new-task" ? (
+                        <>
+                            <AddTask onAddTask={handleAddTask} />
+                            <div className="task-page__actions">
+                                <Button label="Enviar resumen por email" onClick={handleSendSummary} />
+                                {emailStatus && <p className="task-form__success">{emailStatus}</p>}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="task-page__filters-panel">
+                            <div className="task-page__filter-group">
+                                <TaskFilter activeFilters={activeFilters} onFilterChange={setActiveFilters} />
+                            </div>
+                            <div className="task-page__filter-group">
+                                <CategoryFilter activeCategories={activeCategories} onCategoryChange={setActiveCategories} />
+                            </div>
+                        </div>
+                    )}
+                </section>
+            </section>
+
+            <section className="task-page__task-area" id="task-list" aria-label="Lista de tareas">
+                <div className="task-page__task-list">
+                    {sortedTasks.length > 0 ? sortedTasks.map((task) => (
+                        <TaskItem
+                            key={task.id}
+                            task={task}
+                            onToggleComplete={handleToggleComplete}
+                            onDelete={handleDelete}
+                            onEditTask={handleEditTask}
+                        />
+                    )) : (
+                        <div className="task-page__empty">
+                            <span className="task-page__empty-icon" aria-hidden="true">&#128221;</span>
+                            <p>No hay tareas para mostrar.</p>
+                        </div>
+                    )}
+                </div>
+            </section>
+        </main>
     );
 }
