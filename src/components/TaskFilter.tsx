@@ -22,7 +22,7 @@ export const TaskFilter = ({ activeFilters, onFilterChange }: TaskFilterProps) =
     };
 
     return (
-        <div>
+        <div className="task-page__filter-content">
             <h3>Filtros</h3>
             {FILTERS.map((filter) => (
                 <Checkbox
