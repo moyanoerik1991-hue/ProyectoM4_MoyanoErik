@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../components/styles/AuthPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { LoginForm } from "../components/auth/LoginForm.tsx";
