@@ -7,7 +7,11 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const location = useLocation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return <p>Cargando...</p>;
+    }
 
     if (!isAuthenticated) {
         return <Navigate to="/" state={{ from: location }} replace />;
