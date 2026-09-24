@@ -20,26 +20,31 @@ export const PasswordInput = ({
         <div>
             {label && <label>{label}</label>}
 
-            <input
-                type={showPassword ? "text" : "password"}
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-            />
+            <div className="password-input-wrapper">
 
-            <button
-                type="button"
-                onClick={() =>
-                    setShowPassword((previous) => !previous)
-                }
-                aria-label={
-                    showPassword
-                        ? "Ocultar contraseña"
-                        : "Mostrar contraseña"
-                }
-            >
-                {showPassword ? <EyeOff /> : <Eye />}
-            </button>
+                <input
+                    type={showPassword ? "text" : "password"}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={placeholder}
+                />
+
+                {/* Toggle derecha */}
+                <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() =>
+                        setShowPassword((previous) => !previous)
+                    }
+                    aria-label={
+                        showPassword
+                            ? "Ocultar contraseña"
+                            : "Mostrar contraseña"
+                    }
+                >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+            </div>
         </div>
     );
 };
