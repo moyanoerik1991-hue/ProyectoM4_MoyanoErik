@@ -18,3 +18,12 @@ export function filterTasks(tasks: Task[], activeFilters: FilterCategory[]): Tas
 
     return tasks.filter((task) => activeFilters.includes(getTaskCategory(task)));
 }
+
+export function filterTasksByCategory(
+    tasks: Task[],
+    activeCategories: Task["category"][]
+): Task[] {
+    if (activeCategories.length === 0) return tasks;
+
+    return tasks.filter((task) => activeCategories.includes(task.category));
+}
