@@ -1,0 +1,91 @@
+/* ==========================================================================
+   VARIABLES RESPONSIVE - FLUID & PROGRESSIVE (MOBILE FIRST)
+   ========================================================================== */
+
+:root {
+    /* Breakpoints de referencia */
+    --bp-mobile: 368px;
+    --bp-tablet: 680px;
+    --bp-desktop: 1024px;
+
+    /* Contenedor y anchos */
+    --container-max-width: 1200px;
+    --content-max-width-text: 65ch;
+
+    /* Spacing Progresivo y Fluido (escala suavemente sin saltos abruptos) */
+    --container-padding: clamp(1rem, 0.65rem + 1.8vw, 2.5rem);
+    --section-padding-y: clamp(2.75rem, 1.75rem + 3.8vw, 5.5rem);
+    --gutter: clamp(1rem, 0.75rem + 1.2vw, 2rem);
+    --gap-fluid: clamp(1.25rem, 0.8rem + 2vw, 3rem);
+
+    /* Grillas progresivas (intrínsecas sin media queries rígidas) */
+    --grid-auto-min-sm: min(100%, 230px);
+    --grid-auto-min-md: min(100%, 280px);
+    --grid-auto-min-lg: min(100%, 380px);
+}
+
+/* Utilitarios globales de contenedor */
+.container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+    box-sizing: border-box;
+}
+
+/* Utilitario de sección adaptable y progresiva */
+.section-adaptive {
+    width: 100%;
+    padding: var(--section-padding-y) var(--container-padding);
+    box-sizing: border-box;
+}
+
+/* Utilitarios de Grid Progresivo (Auto-fit) */
+.grid-fluid-sm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-auto-min-sm), 1fr));
+    gap: var(--gutter);
+}
+
+.grid-fluid-md {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-auto-min-md), 1fr));
+    gap: var(--gutter);
+}
+
+.grid-fluid-lg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-auto-min-lg), 1fr));
+    gap: var(--gutter);
+}
+
+/* Visibilidad rápida por breakpoint */
+.hide-mobile {
+    display: none !important;
+}
+
+.hide-tablet {
+    display: block;
+}
+
+.hide-desktop {
+    display: block;
+}
+
+@media (min-width: 680px) {
+    .hide-mobile {
+        display: block !important;
+    }
+
+    .hide-tablet {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hide-desktop {
+        display: none !important;
+    }
+}
