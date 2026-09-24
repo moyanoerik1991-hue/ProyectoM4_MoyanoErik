@@ -1,0 +1,1123 @@
+/* ==========================================================================
+   TASKPAGE — Layout de dos columnas + formulario de nueva tarea
+   Paleta alineada al proyecto: #4f46e5 (indigo), #aa3bff (accent), var(--bg), var(--border)
+   Tipografía: Inter (importada abajo) para consistencia premium
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TOKENS LOCALES (complementan las variables globales de index.css)
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+    --tp-sidebar-width: 176px;
+    --tp-sidebar-gap: 0.75rem;
+    --tp-panel-radius: 14px;
+    --tp-panel-shadow: 0 3px 14px rgba(79, 70, 229, 0.08), 0 1px 4px rgba(0,0,0,0.06);
+    --tp-input-radius: 8px;
+    --tp-input-bg: #f8f7ff;
+    --tp-input-border: #ddd9f7;
+    --tp-input-focus-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+    --tp-label-color: #6b6375;
+    --tp-accent: #4f46e5;
+    --tp-accent-light: #eef2ff;
+    --tp-purple: #aa3bff;
+    --tp-purple-light: rgba(170, 59, 255, 0.08);
+    --tp-card-bg: #ffffff;
+    --tp-card-border: #e9e6f8;
+    --tp-text-primary: #08060d;
+    --tp-text-muted: #8b87a0;
+    --tp-danger: #ef4444;
+    --tp-success: #22c55e;
+    --tp-warning: #f59e0b;
+    --tp-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PÁGINA WRAPPER — Ocupa el espacio disponible después del Navbar
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page {
+    font-family: 'Inter', var(--sans, system-ui, sans-serif);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100svh - 64px);
+    background:
+        radial-gradient(ellipse at 10% 20%, rgba(79, 70, 229, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 80%, rgba(170, 59, 255, 0.05) 0%, transparent 55%),
+        #f5f4fb;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    gap: var(--tp-sidebar-gap);
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+
+.task-page__workspace {
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--tp-sidebar-width) minmax(0, 1fr);
+    gap: var(--tp-sidebar-gap);
+    align-items: stretch;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SIDEBAR — Columna izquierda fija con botones de navegación
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__sidebar {
+    width: var(--tp-sidebar-width);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    box-sizing: border-box;
+    align-self: start;
+    padding: 0.65rem;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--tp-card-border);
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(79, 70, 229, 0.08);
+}
+
+.task-page__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Botones del sidebar */
+.task-page__nav-btn {
+    width: 100%;
+    min-height: 42px;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--tp-text-muted);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    text-align: left;
+    transition:
+        background var(--tp-transition),
+        border-color var(--tp-transition),
+        color var(--tp-transition),
+        box-shadow var(--tp-transition),
+        transform var(--tp-transition);
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+}
+
+.task-page__nav-btn:hover {
+    border-color: rgba(79, 70, 229, 0.18);
+    color: var(--tp-accent);
+    background: var(--tp-accent-light);
+    transform: translateX(1px);
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.1);
+}
+
+/* Estado activo/seleccionado del botón del sidebar */
+.task-page__nav-btn--active {
+    background: linear-gradient(135deg, var(--tp-accent), #6366f1);
+    border-color: var(--tp-accent);
+    color: #ffffff;
+    box-shadow: 0 5px 14px rgba(79, 70, 229, 0.24);
+}
+
+.task-page__nav-btn--active:hover {
+    background: linear-gradient(135deg, #4338ca, var(--tp-accent));
+    border-color: #4338ca;
+    color: #ffffff;
+    transform: translateX(1px);
+}
+
+/* Botón "Nueva Tarea" con énfasis especial */
+.task-page__nav-btn--primary {
+    background: linear-gradient(135deg, var(--tp-accent) 0%, #6366f1 100%);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(79, 70, 229, 0.32);
+}
+
+.task-page__nav-btn--primary:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 6px 22px rgba(79, 70, 229, 0.42);
+    transform: translateX(2px) translateY(-1px);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PANEL DERECHO — Contenedor dinámico principal
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel {
+    width: 100%;
+    min-width: 0;
+    min-height: 210px;
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-card-border);
+    border-radius: var(--tp-panel-radius);
+    box-shadow: var(--tp-panel-shadow);
+    padding: 0.6rem 0.75rem 0.75rem;
+    box-sizing: border-box;
+    position: relative;
+    transition: box-shadow var(--tp-transition);
+    animation: tp-fade-in-up 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.task-page__panel:focus-within {
+    box-shadow:
+        var(--tp-panel-shadow),
+        0 0 0 3px rgba(79, 70, 229, 0.08);
+}
+
+/* Cabecera del panel */
+.task-page__panel-title {
+    display: flex;
+    align-items: center;
+    min-height: 1.4rem;
+    margin: 0 0 0.4rem;
+    padding: 0 0 0.35rem;
+    border-bottom: 1px solid var(--tp-card-border);
+    color: var(--tp-text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.task-page__panel-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.1em;
+    background: linear-gradient(to bottom, var(--tp-accent), var(--tp-purple));
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FORMULARIO NUEVA TAREA — Estructura del wireframe
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ── Fila 1: Título + Categoría (inline) ──────────────────────────────── */
+
+.task-form__row--title {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.task-form__field--title {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-form__field--category {
+    flex-shrink: 0;
+    width: clamp(130px, 20%, 180px);
+}
+
+/* ── Fila 2: Descripción con contador ────────────────────────────────── */
+
+.task-form__field--description {
+    position: relative;
+}
+
+/* ── Fila 3: Fecha límite (fieldset) ─────────────────────────────────── */
+
+.task-form__deadline {
+    border: 1px solid var(--tp-card-border);
+    border-radius: var(--tp-input-radius);
+    padding: 0.85rem 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    background: var(--tp-input-bg);
+}
+
+.task-form__deadline legend {
+    padding: 0 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--tp-label-color);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.task-form__deadline .task-form__inline-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.task-form__deadline-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+/* ── Fila 4: Acciones ────────────────────────────────────────────────── */
+
+.task-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding-top: 0.25rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   LABELS
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tp-label-color);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+    user-select: none;
+}
+
+.task-form__deadline label {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--tp-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   INPUTS de texto
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form input[type="text"],
+.task-page__panel form input[type="email"],
+.task-page__panel form input[type="number"] {
+    width: 100%;
+    padding: 0.62rem 0.9rem;
+    background: var(--tp-input-bg);
+    border: 1.5px solid var(--tp-input-border);
+    border-radius: var(--tp-input-radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--tp-text-primary);
+    box-sizing: border-box;
+    transition:
+        border-color var(--tp-transition),
+        background var(--tp-transition),
+        box-shadow var(--tp-transition);
+    outline: none;
+}
+
+.task-page__panel form input[type="text"]:focus,
+.task-page__panel form input[type="email"]:focus,
+.task-page__panel form input[type="number"]:focus {
+    border-color: var(--tp-accent);
+    background: #ffffff;
+    box-shadow: var(--tp-input-focus-shadow);
+}
+
+.task-page__panel form input[type="text"]::placeholder,
+.task-page__panel form input[type="email"]::placeholder {
+    color: var(--tp-text-muted);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   INPUTS de fecha y hora
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form input[type="date"],
+.task-page__panel form input[type="time"] {
+    display: block;
+    width: 150px;
+    min-height: 2.2rem;
+    padding: 0.52rem 0.75rem;
+    background: #ffffff;
+    border: 1.5px solid var(--tp-input-border);
+    border-radius: var(--tp-input-radius);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--tp-text-primary);
+    cursor: pointer;
+    box-sizing: border-box;
+    transition:
+        border-color var(--tp-transition),
+        box-shadow var(--tp-transition);
+    outline: none;
+    color-scheme: light;
+}
+
+.task-form__deadline-field input[type="date"],
+.task-form__deadline-field input[type="time"] {
+    width: clamp(135px, 18vw, 170px);
+    color: #252238;
+    background-color: #ffffff;
+    opacity: 1;
+    -webkit-text-fill-color: #252238;
+}
+
+/* Chromium pinta las partes internas de date/time con un color propio. */
+.task-form__deadline-field input[type="date"]::-webkit-datetime-edit,
+.task-form__deadline-field input[type="time"]::-webkit-datetime-edit,
+.task-form__deadline-field input[type="date"]::-webkit-datetime-edit-text,
+.task-form__deadline-field input[type="time"]::-webkit-datetime-edit-text,
+.task-form__deadline-field input[type="date"]::-webkit-datetime-edit-month-field,
+.task-form__deadline-field input[type="date"]::-webkit-datetime-edit-day-field,
+.task-form__deadline-field input[type="date"]::-webkit-datetime-edit-year-field,
+.task-form__deadline-field input[type="time"]::-webkit-datetime-edit-hour-field,
+.task-form__deadline-field input[type="time"]::-webkit-datetime-edit-minute-field {
+    color: #252238;
+    -webkit-text-fill-color: #252238;
+}
+
+.task-form__deadline-field input[type="date"]::-webkit-calendar-picker-indicator,
+.task-form__deadline-field input[type="time"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    filter: none;
+    cursor: pointer;
+}
+
+.task-page__panel form input[type="date"]:focus,
+.task-page__panel form input[type="time"]:focus {
+    border-color: var(--tp-input-border);
+    background: #ffffff;
+    color: #252238;
+    box-shadow: none;
+    -webkit-text-fill-color: #252238;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SELECT — Desplegable de categoría
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form select {
+    width: 100%;
+    padding: 0.62rem 2rem 0.62rem 0.9rem;
+    background-color: var(--tp-input-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6375' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    border: 1.5px solid var(--tp-input-border);
+    border-radius: var(--tp-input-radius);
+    font-family: inherit;
+    font-size: 0.92rem;
+    color: var(--tp-text-primary);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    outline: none;
+    transition:
+        border-color var(--tp-transition),
+        background-color var(--tp-transition),
+        box-shadow var(--tp-transition);
+}
+
+.task-page__panel form select:focus {
+    border-color: var(--tp-accent);
+    background-color: #ffffff;
+    box-shadow: var(--tp-input-focus-shadow);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TEXTAREA — Descripción de la tarea
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form textarea {
+    width: 100%;
+    min-height: 110px;
+    max-height: 280px;
+    padding: 0.75rem 0.9rem;
+    background: var(--tp-input-bg);
+    border: 1.5px solid var(--tp-input-border);
+    border-radius: var(--tp-input-radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--tp-text-primary);
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+    line-height: 1.55;
+    transition:
+        border-color var(--tp-transition),
+        background var(--tp-transition),
+        box-shadow var(--tp-transition);
+    display: block;
+}
+
+.task-page__panel form textarea:focus {
+    border-color: var(--tp-accent);
+    background: #ffffff;
+    box-shadow: var(--tp-input-focus-shadow);
+}
+
+.task-page__panel form textarea::placeholder {
+    color: var(--tp-text-muted);
+}
+
+/* Contador de caracteres — el <span> generado por Textarea.tsx */
+.task-page__panel form textarea + span {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--tp-text-muted);
+    margin-top: 0.3rem;
+    transition: color var(--tp-transition);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+.task-page__panel form textarea:not(:placeholder-shown) + span {
+    color: var(--tp-accent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BUTTONS — Acciones del formulario
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.62rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition:
+        background var(--tp-transition),
+        box-shadow var(--tp-transition),
+        transform var(--tp-transition),
+        filter var(--tp-transition);
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+/* Botón submit — primario */
+.task-page__panel form button[type="submit"] {
+    background: linear-gradient(135deg, var(--tp-accent) 0%, #6366f1 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.task-page__panel form button[type="submit"]:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.task-page__panel form button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Botón secundario (Cancelar, Enviar email) */
+.task-page__panel form button[type="button"] {
+    background: transparent;
+    color: var(--tp-accent);
+    border: 1.5px solid var(--tp-input-border);
+}
+
+.task-page__panel form button[type="button"]:hover:not(:disabled) {
+    background: var(--tp-accent-light);
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Estado deshabilitado */
+.task-page__panel form button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MENSAJES — Error y éxito del formulario
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__panel form > p {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.task-page__panel form > p:not(.task-form__success) {
+    background: rgba(239, 68, 68, 0.08);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.task-form__success {
+    background: rgba(34, 197, 94, 0.08);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PANEL DE FILTROS
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__filters-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.task-page__task-area {
+    width: 100%;
+    min-height: 430px;
+    box-sizing: border-box;
+}
+
+.task-page__filter-group {
+    padding: 0.5rem 0.7rem;
+    background: var(--tp-accent-light);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 6px;
+}
+
+.task-page__filter-group h3 {
+    margin: 0 0 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--tp-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.task-page__filters-panel label {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--tp-text-primary);
+    padding: 0.35rem 0;
+    cursor: pointer;
+    transition: color var(--tp-transition);
+    user-select: none;
+}
+
+.task-page__filters-panel label:hover {
+    color: var(--tp-accent);
+}
+
+.task-page__filters-panel input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--tp-accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   LISTA DE TAREAS — Cards de TaskItem
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__task-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    align-items: start;
+    gap: 0.75rem;
+    min-height: 430px;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-card-border);
+    box-shadow: var(--tp-panel-shadow);
+    box-sizing: border-box;
+}
+
+.task-page__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin: 0.85rem auto 0;
+    text-align: center;
+}
+
+.task-page__actions > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    padding: 0.62rem 1.25rem;
+    border: 1px solid var(--tp-accent);
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--tp-accent), #6366f1);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.22);
+    transition: background var(--tp-transition), box-shadow var(--tp-transition), transform var(--tp-transition);
+}
+
+.task-page__actions > button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4338ca, var(--tp-accent));
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+}
+
+.task-page__actions > button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.task-page__actions > button:focus-visible {
+    outline: 3px solid rgba(79, 70, 229, 0.25);
+    outline-offset: 2px;
+}
+
+/* Card individual de tarea */
+.task-page__task-card {
+    min-width: 0;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    background: #fdfdff;
+    border: 1px solid var(--tp-card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(79, 70, 229, 0.05);
+    transition:
+        box-shadow var(--tp-transition),
+        transform var(--tp-transition),
+        border-color var(--tp-transition);
+    position: relative;
+}
+
+.task-page__task-card:hover {
+    box-shadow: 0 6px 22px rgba(79, 70, 229, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(79, 70, 229, 0.25);
+}
+
+.task-page__task-card h3 {
+    min-width: 0;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--tp-text-primary);
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.65rem;
+    min-width: 0;
+    margin-bottom: 0.75rem;
+}
+
+.task-card__header .task-badge {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.task-card__description {
+    min-height: 3.6em;
+    margin: 0 0 0.85rem;
+    font-size: 0.88rem;
+    color: var(--tp-text-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow-wrap: anywhere;
+}
+
+.task-card__details {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--tp-card-border);
+    border-bottom: 1px solid var(--tp-card-border);
+}
+
+.task-card__details p {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    color: var(--tp-text-muted);
+}
+
+.task-card__details strong {
+    flex: 0 0 auto;
+    color: var(--tp-label-color);
+    font-weight: 600;
+}
+
+.task-card__details span {
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-card__countdown span {
+    color: var(--tp-accent);
+    font-weight: 600;
+}
+
+.task-card__countdown--empty {
+    visibility: hidden;
+}
+
+.task-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: auto;
+    padding-top: 0.85rem;
+}
+
+.task-card__actions button {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1.5px solid var(--tp-input-border);
+    background: #ffffff;
+    color: var(--tp-text-primary);
+    cursor: pointer;
+    transition:
+        background var(--tp-transition),
+        border-color var(--tp-transition),
+        color var(--tp-transition),
+        transform var(--tp-transition);
+    margin-right: 0.4rem;
+}
+
+.task-card__actions button:hover {
+    background: var(--tp-accent-light);
+    border-color: rgba(79, 70, 229, 0.35);
+    color: var(--tp-accent);
+    transform: translateY(-1px);
+}
+
+/* Botón Eliminar — destructivo */
+.task-card__actions button:last-child {
+    color: var(--tp-danger);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+.task-card__actions button:last-child:hover {
+    background: rgba(239, 68, 68, 0.07);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: var(--tp-danger);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ESTADO VACÍO
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-page__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 1rem;
+    color: var(--tp-text-muted);
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.task-page__empty-icon {
+    font-size: 2.5rem;
+    opacity: 0.45;
+}
+
+.task-page__empty p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BADGES DE ESTADO
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.22rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.task-badge--completed {
+    background: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+}
+
+.task-badge--pending {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+}
+
+.task-badge--expired {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   RESPONSIVE — Mobile first
+   ────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 679px) {
+    .task-page {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .task-page__sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .task-page__workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .task-page__content {
+        width: 100%;
+    }
+
+    .task-page__nav-btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .task-page__panel {
+        min-height: auto;
+        width: 100%;
+    }
+
+    .task-page__task-area {
+        min-height: 300px;
+    }
+
+    .task-form__row--title {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .task-form__field--category {
+        width: 100%;
+    }
+
+    .task-page__filters-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .task-page__task-list {
+        grid-template-columns: 1fr;
+        min-height: 300px;
+    }
+
+    .task-form__deadline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .task-form__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .task-page__panel form button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 680px) and (max-width: 1023px) {
+    :root {
+        --tp-sidebar-width: 150px;
+    }
+
+    .task-page__nav-btn {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.75rem;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DARK MODE
+   ────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tp-card-bg: #1a1b2e;
+        --tp-card-border: #2d2e45;
+        --tp-input-bg: #1e1f33;
+        --tp-input-border: #383a55;
+        --tp-accent-light: rgba(79, 70, 229, 0.12);
+        --tp-label-color: #938b8b;
+        --tp-text-primary: #f7f4f4;
+        --tp-text-muted: #6b6d85;
+        --tp-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .task-page {
+        background:
+            radial-gradient(ellipse at 10% 20%, rgba(79, 70, 229, 0.1) 0%, transparent 55%),
+            radial-gradient(ellipse at 90% 80%, rgba(170, 59, 255, 0.08) 0%, transparent 55%),
+            #0f1020;
+    }
+
+    .task-page__nav-btn {
+        background: #1a1b2e;
+        color: #c5c2d5;
+    }
+
+    .task-page__sidebar {
+        background: rgba(26, 27, 46, 0.92);
+        border-color: #2d2e45;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
+    }
+
+    .task-page__nav-btn {
+        background: transparent;
+        border-color: transparent;
+    }
+
+    .task-page__nav-btn:hover {
+        background: rgba(79, 70, 229, 0.16);
+        border-color: rgba(129, 140, 248, 0.28);
+        color: #c7d2fe;
+    }
+
+    .task-page__nav-btn--active,
+    .task-page__nav-btn--active:hover {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        border-color: #6366f1;
+        color: #ffffff;
+    }
+
+    .task-page__panel form input[type="text"]:focus,
+    .task-page__panel form input[type="email"]:focus,
+    .task-page__panel form input[type="number"]:focus,
+    .task-page__panel form select:focus,
+    .task-page__panel form textarea:focus {
+        background: #22243a;
+    }
+
+    .task-page__panel form button[type="button"] {
+        color: #a5b4fc;
+        border-color: #383a55;
+    }
+
+    .task-page__panel form button[type="button"]:hover:not(:disabled) {
+        background: rgba(79, 70, 229, 0.15);
+    }
+
+    .task-page__filter-group {
+        background: rgba(79, 70, 229, 0.08);
+        border-color: rgba(79, 70, 229, 0.2);
+    }
+
+    .task-page__task-card {
+        background: #1e1f33;
+    }
+
+    .task-page__task-card button {
+        background: #1a1b2e;
+        border-color: #2d2e45;
+        color: #c5c2d5;
+    }
+
+    .task-page__panel form > p:not(.task-form__success) {
+        background: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MICRO-ANIMACIONES
+   ────────────────────────────────────────────────────────────────────────── */
+
+@keyframes tp-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.task-page__sidebar {
+    animation: tp-fade-in-up 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
