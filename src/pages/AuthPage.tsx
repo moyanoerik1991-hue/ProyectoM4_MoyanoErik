@@ -33,7 +33,7 @@ export const AuthPage = () => {
     };
 
     return (
-        <main>
+        <main className="auth-page">
             {mode === "login" ? (
                 <div>
                     <LoginForm
