@@ -14,7 +14,7 @@ export const CategoryFilter = ({ activeCategories, onCategoryChange }: CategoryF
     };
 
     return (
-        <div>
+        <div className="task-page__filter-content">
             <h3>Categoría</h3>
             {CATEGORY_OPTIONS.map((option) => (
                 <Checkbox
