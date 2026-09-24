@@ -1,0 +1,226 @@
+/* ==========================================================================
+   AUTH PAGE — Estructura inspirada en la imagen de referencia
+   Paleta: colores del proyecto (#4f46e5, #aa3bff, --bg, --text-h)
+   ========================================================================== */
+
+/* ── Página completa ──────────────────────────────────────────────────── */
+main:has(form) {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem);
+    box-sizing: border-box;
+
+    /* Fondo degradado difuminado — inspirado en la imagen */
+    background:
+        radial-gradient(ellipse at 30% 40%, rgba(79, 70, 229, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 75% 65%, rgba(170, 59, 255, 0.25) 0%, transparent 55%),
+        linear-gradient(135deg, #0f0c1a 0%, #1a1630 50%, #0f1a2e 100%);
+}
+
+/* ── Wrapper div del modo login/register ─────────────────────────────── */
+main:has(form) div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    gap: 0;
+}
+
+/* ── Título fuera del card (como en la imagen "USER LOGIN") ───────────── */
+main:has(form) div form h2 {
+    font-size: clamp(1.2rem, 1rem + 1.2vw, 1.6rem);
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #e2e8f0;
+    margin: 0 0 clamp(1rem, 3vw, 1.5rem);
+    text-align: center;
+}
+
+/* ── Card principal (área oscura con inputs) ─────────────────────────── */
+main:has(form) form {
+    width: 100%;
+    background: #1a1f2e;
+    border-radius: 6px 6px 0 0;
+    padding: clamp(1.75rem, 4vw, 2.25rem) clamp(1.5rem, 4vw, 2rem);
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: none;
+}
+
+/* ── Mensaje de error ────────────────────────────────────────────────── */
+main:has(form) form p {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ── Grupo label + input ─────────────────────────────────────────────── */
+main:has(form) form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+/* Input con apariencia de la imagen: fondo claro sobre card oscuro */
+main:has(form) form input {
+    width: 100%;
+    padding: clamp(0.65rem, 1.5vw, 0.85rem) clamp(0.85rem, 2vw, 1.1rem);
+    margin-bottom: clamp(0.85rem, 2vw, 1.1rem);
+    background: #e8eaf0;
+    border: none;
+    border-radius: 4px;
+    font-size: clamp(0.95rem, 1vw, 1.05rem);
+    color: #1e1e2e;
+    box-sizing: border-box;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+main:has(form) form input:focus {
+    outline: none;
+    background: #f0f2ff;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
+}
+
+main:has(form) form input::placeholder {
+    color: #6b7280;
+}
+
+/* ── Wrapper input de contraseña ─────────────────────────────────────── */
+main:has(form) form .password-input-wrapper {
+    position: relative;     /* ancla el botón absoluto */
+    margin-bottom: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+/* El input ocupa el 100% y cede espacio a la derecha para el ícono */
+main:has(form) form .password-input-wrapper input {
+    width: 100%;
+    margin-bottom: 0;
+    padding-right: 2.75rem; /* espacio para el botón del ojo */
+    box-sizing: border-box;
+}
+
+/* Botón toggle — superpuesto dentro del input, lado derecho */
+main:has(form) form .password-input-wrapper .password-toggle {
+    all: unset;             /* limpia herencia de form button */
+    position: absolute;
+    top: 50%;
+    right: 0.6rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+main:has(form) form .password-input-wrapper .password-toggle:hover {
+    color: #4f46e5;
+    transform: translateY(-50%); /* mantiene el centrado vertical, sin movimiento extra */
+}
+
+/* ── Botones de acción del form (excluye el toggle de contraseña) ─────── */
+main:has(form) form button:not(.password-toggle) {
+    display: block;
+    width: 100%;
+    padding: clamp(0.75rem, 1.5vw, 0.9rem);
+    border: none;
+    border-radius: 4px;
+    font-size: clamp(0.9rem, 1vw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.2s ease;
+    box-sizing: border-box;
+}
+
+/* Botón submit (primario) — tono accent del proyecto */
+main:has(form) form button[type="submit"] {
+    background: #4f46e5;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+main:has(form) form button[type="submit"]:hover:not(:disabled) {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+/* Botón Google (secundario) — contorno */
+main:has(form) form button[type="button"]:not(.password-toggle) {
+    background: transparent;
+    color: #a5b4fc;
+    border: 1px solid rgba(79, 70, 229, 0.45);
+}
+
+main:has(form) form button[type="button"]:not(.password-toggle):hover:not(:disabled) {
+    background: rgba(79, 70, 229, 0.1);
+    transform: translateY(-1px);
+}
+
+main:has(form) form button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ── Botón de alternancia LOGIN / REGISTER (debajo del card) ─────────── */
+main:has(form) div > button {
+    width: 100%;
+    max-width: 420px;
+    padding: clamp(0.75rem, 1.5vw, 0.9rem);
+    background: #111827;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    font-size: clamp(0.85rem, 0.9vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+main:has(form) div > button:hover {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* ── Soporte modo claro (si el proyecto lo usa) ───────────────────────── */
+@media (prefers-color-scheme: light) {
+    main:has(form) {
+        background:
+            radial-gradient(ellipse at 30% 40%, rgba(79, 70, 229, 0.2) 0%, transparent 60%),
+            radial-gradient(ellipse at 75% 65%, rgba(170, 59, 255, 0.15) 0%, transparent 55%),
+            linear-gradient(135deg, #e0e7ff 0%, #f0e6ff 50%, #dbeafe 100%);
+    }
+
+    main:has(form) form {
+        background: #1e1b4b;
+    }
+
+    main:has(form) div form h2 {
+        color: #1e1b4b;
+    }
+}
