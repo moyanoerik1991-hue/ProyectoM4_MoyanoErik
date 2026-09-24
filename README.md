@@ -25,7 +25,8 @@ UniversalTask una APP donde puedes gestionar tus tareas.
 ## Accesos Directos del Proyecto
 
 * **Deploy en Vercel:** https://proyecto-m4-moyano-erik.vercel.app
-* **Documentacion de la AI:** https://docs.google.com/document/d/1fgk4Sszp3cO_eGSIe-Ev64zkOS-cN2-eNWcoi0y35So/edit?usp=sharing
+
+* **Correo Funcional(test):** test.proyecto1991@gmail.com  -   !test1234
 
 ---
 
