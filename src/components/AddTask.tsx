@@ -54,49 +54,62 @@ export const AddTask = ({ onAddTask }: AddTaskProps) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="task-form" onSubmit={handleSubmit}>
             {error && <p>{error}</p>}
-            <Input
-                label="Titulo"
-                placeholder="Nueva Tarea"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                maxLength={50}
-            />
-            <Textarea
-                label="Descripcion"
-                placeholder="Descripcion de la tarea"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                maxLength={200}
-            />
-            <Select
-                label="Categoria"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as Task["category"])}
-                options={CATEGORY_OPTIONS}
-            />
-            <fieldset>
+            <div className="task-form__row--title">
+                <div className="task-form__field--title">
+                    <Input
+                        label="Titulo"
+                        placeholder="Nueva Tarea"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        maxLength={50}
+                    />
+                </div>
+                <div className="task-form__field--category">
+                    <Select
+                        label="Categoria"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value as Task["category"])}
+                        options={CATEGORY_OPTIONS}
+                    />
+                </div>
+            </div>
+            <div className="task-form__field--description">
+                <Textarea
+                    label="Descripcion"
+                    placeholder="Descripcion de la tarea"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    maxLength={200}
+                />
+            </div>
+            <fieldset className="task-form__deadline">
                 <legend>Fecha Limite de la Tarea</legend>
-                <Input
-                    label="Fecha"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    min={dateRange.min}
-                    max={dateRange.max}
-                />
-                <Input
-                    label="Hora"
-                    type="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                />
+                <div className="task-form__inline-group">
+                    <div className="task-form__deadline-field">
+                        <Input
+                            label="Fecha"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            min={dateRange.min}
+                            max={dateRange.max}
+                        />
+                    </div>
+                    <div className="task-form__deadline-field">
+                        <Input
+                            label="Hora"
+                            type="time"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                        />
+                    </div>
+                </div>
             </fieldset>
-            <Button
-                label="Agregar"
-                type="submit"
-            />
+            <div className="task-form__actions">
+                <Button label="Agregar" type="submit" />
+            </div>
         </form>
     );
 }
