@@ -46,7 +46,7 @@ export const HomePage = () => {
 
                         <div className="home__task">
                             <div>
-                                <strong>Preparar proyecto</strong>
+                                <strong>Proyecto Integrado M4</strong>
                                 <small>Entrega próxima</small>
                             </div>
 
@@ -58,7 +58,7 @@ export const HomePage = () => {
                         <div className="home__task">
                             <div>
                                 <strong>Estudiar TypeScript</strong>
-                                <small>En progreso</small>
+                                <small>Lecturas 1-6</small>
                             </div>
 
                             <span className="home__task-status">
@@ -69,10 +69,10 @@ export const HomePage = () => {
                         <div className="home__task home__task--completed">
                             <div>
                                 <strong>Revisar documentación</strong>
-                                <small>Completada</small>
+                                <small>HTML, CSS y JS</small>
                             </div>
 
-                            <span>✓</span>
+                            <span>Completada</span>
                         </div>
                     </div>
                 </div>
